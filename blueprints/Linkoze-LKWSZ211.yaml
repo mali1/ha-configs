@@ -1,0 +1,75 @@
+blueprint:
+  name: Zigbee2MQTT - Linkoze 2-Button  Switch
+  description: Automate your Linkoze 2-Button Scene Switch via Zigbee2MQTT
+  domain: automation
+  input:
+    switch:
+      name: Linkoze 2-Button Switch
+      description: Linkoze 2-Button Switch
+      selector:
+        entity:
+          integration: mqtt
+          domain: sensor
+    button_one_short_press:
+      name: Single Press - Button 1
+      description: Action to run on button 1 (top) single press
+      default: []
+      selector:
+        action: {}
+    button_one_double_press:
+      name: Double Press - Button 1
+      description: Action to run on button 1 (top) double press
+      default: []
+      selector:
+        action: {}
+    button_one_long_press:
+      name: Long Press - Button 1
+      description: Action to run on button 1 (top) long press
+      default: []
+      selector:
+        action: {}
+    button_two_short_press:
+      name: Single Press - Button 2
+      description: Action to run on button 2 (bottom) single press
+      default: []
+      selector:
+        action: {}
+    button_two_double_press:
+      name: Double Press - Button 2
+      description: Action to run on button 2 (bottom) double press
+      default: []
+      selector:
+        action: {}
+    button_two_long_press:
+      name: Long Press - Button 2
+      description: Action to run on button 2 (bottom) long press
+      default: []
+      selector:
+        action: {}
+mode: restart
+max_exceeded: silent
+trigger:
+- platform: state
+  entity_id: !input 'switch'
+action:
+- variables:
+    command: '{{ trigger.to_state.state }}'
+- choose:
+  - conditions:
+    - '{{ command == ''button_1_single'' }}'
+    sequence: !input 'button_one_short_press'
+  - conditions:
+    - '{{ command == ''button_2_single'' }}'
+    sequence: !input 'button_two_short_press'
+  - conditions:
+    - '{{ command == ''button_1_double'' }}'
+    sequence: !input 'button_one_double_press'
+  - conditions:
+    - '{{ command == ''button_2_double'' }}'
+    sequence: !input 'button_two_double_press'
+  - conditions:
+    - '{{ command == ''button_1_hold'' }}'
+    sequence: !input 'button_one_long_press'
+  - conditions:
+    - '{{ command == ''button_2_hold'' }}'
+    sequence: !input 'button_two_long_press'
